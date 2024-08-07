@@ -9,6 +9,7 @@ import os
 import re
 import shutil
 import sys
+import threading
 from collections import deque
 from contextlib import AsyncExitStack, asynccontextmanager
 from dataclasses import dataclass as python_dataclass
@@ -41,7 +42,10 @@ from starlette.responses import PlainTextResponse, Response
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from gradio import processing_utils, utils
-from gradio.data_classes import BlocksConfigDict, PredictBody
+from gradio.data_classes import (
+    BlocksConfigDict,
+    PredictBody,
+)
 from gradio.exceptions import Error
 from gradio.helpers import EventData
 from gradio.state_holder import SessionState
@@ -49,6 +53,9 @@ from gradio.state_holder import SessionState
 if TYPE_CHECKING:
     from gradio.blocks import BlockFunction, Blocks
     from gradio.routes import App
+
+
+config_lock = threading.Lock()
 
 
 class Obj:
@@ -104,6 +111,11 @@ class Obj:
 
     def __repr__(self) -> str:
         return str(self.__dict__)
+
+    def pop(self, item, default=None):
+        if item in self:
+            return self.__dict__.pop(item)
+        return default
 
 
 @document()
@@ -373,7 +385,7 @@ class GradioUploadFile(UploadFile):
         headers: Headers | None = None,
     ) -> None:
         super().__init__(file, size=size, filename=filename, headers=headers)
-        self.sha = hashlib.sha1()
+        self.sha = hashlib.sha256()
 
 
 @python_dataclass(frozen=True)
@@ -646,10 +658,11 @@ def update_root_in_config(config: BlocksConfigDict, root: str) -> BlocksConfigDi
     root url has changed, all of the urls in the config that correspond to component
     file urls are updated to use the new root url.
     """
-    previous_root = config.get("root")
-    if previous_root is None or previous_root != root:
-        config["root"] = root
-        config = processing_utils.add_root_url(config, root, previous_root)  # type: ignore
+    with config_lock:
+        previous_root = config.get("root")
+        if previous_root is None or previous_root != root:
+            config["root"] = root
+            config = processing_utils.add_root_url(config, root, previous_root)  # type: ignore
     return config
 
 

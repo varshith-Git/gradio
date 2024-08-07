@@ -1,5 +1,41 @@
 # @gradio/chatbot
 
+## 0.12.3
+
+### Dependency updates
+
+- @gradio/atoms@0.7.8
+- @gradio/icons@0.6.1
+- @gradio/utils@0.5.2
+- @gradio/statustracker@0.7.3
+- @gradio/upload@0.12.1
+- @gradio/image@0.13.1
+- @gradio/video@0.10.1
+- @gradio/audio@0.13.1
+- @gradio/gallery@0.11.4
+- @gradio/markdown@0.9.1
+- @gradio/plot@0.6.2
+
+## 0.12.2
+
+### Fixes
+
+- [#8865](https://github.com/gradio-app/gradio/pull/8865) [`2f630ab`](https://github.com/gradio-app/gradio/commit/2f630abf53ec493a3ff5e827b5951b26c74b7242) - Chatbot Examples Scroll Fix.  Thanks @dawoodkhan82!
+
+### Dependency updates
+
+- @gradio/audio@0.13.0
+- @gradio/video@0.10.0
+- @gradio/wasm@0.12.0
+- @gradio/markdown@0.9.0
+- @gradio/client@1.4.0
+- @gradio/image@0.13.0
+- @gradio/statustracker@0.7.2
+- @gradio/upload@0.12.0
+- @gradio/atoms@0.7.7
+- @gradio/gallery@0.11.3
+- @gradio/plot@0.6.1
+
 ## 0.12.1
 
 ### Features
