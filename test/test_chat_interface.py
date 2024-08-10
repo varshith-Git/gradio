@@ -124,7 +124,9 @@ class TestInit:
             chatbot = gr.ChatInterface(
                 double, examples=["hello", "hi"], cache_examples="lazy"
             )
-            async for _ in chatbot.examples_handler.async_lazy_cache(0, "hello"):
+            async for _ in chatbot.examples_handler.async_lazy_cache(
+                (0, ["hello"]), "hello"
+            ):
                 pass
             prediction_hello = chatbot.examples_handler.load_from_cache(0)
             assert prediction_hello[0].root[0] == ("hello", "hello hello")
@@ -299,3 +301,17 @@ class TestAPI:
                 "robot ",
                 "robot h",
             ]
+
+    @pytest.mark.parametrize("type", ["tuples", "messages"])
+    def test_multimodal_api(self, type, connect):
+        def double_multimodal(msg, history):
+            return msg["text"] + " " + msg["text"]
+
+        chatbot = gr.ChatInterface(
+            double_multimodal,
+            type=type,
+            multimodal=True,
+        )
+        with connect(chatbot) as client:
+            result = client.predict({"text": "hello", "files": []}, api_name="/chat")
+            assert result == "hello hello"

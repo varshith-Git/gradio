@@ -1,5 +1,42 @@
 # @gradio/dataframe
 
+## 0.9.2
+
+### Dependency updates
+
+- @gradio/atoms@0.7.9
+- @gradio/statustracker@0.7.4
+- @gradio/client@1.5.0
+- @gradio/upload@0.12.2
+- @gradio/markdown@0.9.2
+- @gradio/button@0.2.49
+
+## 0.9.1
+
+### Dependency updates
+
+- @gradio/atoms@0.7.8
+- @gradio/utils@0.5.2
+- @gradio/statustracker@0.7.3
+- @gradio/upload@0.12.1
+- @gradio/markdown@0.9.1
+- @gradio/button@0.2.48
+
+## 0.9.0
+
+### Features
+
+- [#8745](https://github.com/gradio-app/gradio/pull/8745) [`4030f28`](https://github.com/gradio-app/gradio/commit/4030f28af6ae9f3eb94bb4e9cae83fb7016cdaad) - Allows updating the dataset of a `gr.Examples`.  Thanks @abidlabs!
+
+### Dependency updates
+
+- @gradio/markdown@0.9.0
+- @gradio/client@1.4.0
+- @gradio/statustracker@0.7.2
+- @gradio/upload@0.12.0
+- @gradio/atoms@0.7.7
+- @gradio/button@0.2.47
+
 ## 0.8.13
 
 ### Fixes

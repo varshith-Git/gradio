@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 import pathlib
@@ -38,11 +40,14 @@ HF_TOKEN = os.getenv("HF_TOKEN") or HfFolder.get_token()
 def connect(
     demo: gr.Blocks,
     download_files: str = DEFAULT_TEMP_DIR,
+    client_kwargs: dict | None = None,
     **kwargs,
 ):
     _, local_url, _ = demo.launch(prevent_thread_lock=True, **kwargs)
+    if client_kwargs is None:
+        client_kwargs = {}
     try:
-        yield Client(local_url, download_files=download_files)
+        yield Client(local_url, download_files=download_files, **client_kwargs)
     finally:
         # A more verbose version of .close()
         # because we should set a timeout
@@ -335,7 +340,7 @@ class TestClientPredictions:
             )
             assert output["orig_name"] == "bus.png"
 
-    @pytest.mark.flaky
+    @pytest.mark.flaky(reruns=5)
     def test_cancel_from_client_queued(self, cancel_from_client_demo):
         with connect(cancel_from_client_demo) as client:
             start = time.time()
@@ -362,7 +367,7 @@ class TestClientPredictions:
                         break
                     time.sleep(0.5)
             # Result for iterative jobs will raise there is an exception
-            with pytest.raises(CancelledError):
+            with pytest.raises(Exception):
                 job.result()
             # The whole prediction takes 10 seconds to run
             # and does not iterate. So this tests that we can cancel
@@ -1406,3 +1411,13 @@ def test_upstream_exceptions(count_generator_demo_exception):
             match="The upstream Gradio app has raised an exception but has not enabled verbose error reporting.",
         ):
             client.predict(7, api_name="/count")
+
+
+def test_httpx_kwargs(increment_demo):
+    with connect(
+        increment_demo, client_kwargs={"httpx_kwargs": {"timeout": 5}}
+    ) as client:
+        with patch("httpx.post", MagicMock()) as mock_post:
+            with pytest.raises(Exception):
+                client.predict(1, api_name="/increment_with_queue")
+            assert mock_post.call_args.kwargs["timeout"] == 5

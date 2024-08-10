@@ -8,7 +8,17 @@ import secrets
 import shutil
 from abc import ABC, abstractmethod
 from enum import Enum, auto
-from typing import Any, Iterator, List, Literal, Optional, Tuple, TypedDict, Union
+from typing import (
+    Any,
+    Iterator,
+    List,
+    Literal,
+    NewType,
+    Optional,
+    Tuple,
+    TypedDict,
+    Union,
+)
 
 from fastapi import Request
 from gradio_client.documentation import document
@@ -20,6 +30,9 @@ try:
     from pydantic import JsonValue
 except ImportError:
     JsonValue = Any
+
+DeveloperPath = NewType("DeveloperPath", str)
+UserProvidedPath = NewType("UserProvidedPath", str)
 
 
 class CancelBody(BaseModel):
@@ -315,6 +328,7 @@ class BlocksConfigDict(TypedDict):
     protocol: Literal["ws", "sse", "sse_v1", "sse_v2", "sse_v2.1", "sse_v3"]
     body_css: BodyCSS
     fill_height: bool
+    fill_width: bool
     theme_hash: str
     layout: NotRequired[Layout]
     dependencies: NotRequired[list[dict[str, Any]]]
